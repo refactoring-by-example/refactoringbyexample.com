@@ -22,10 +22,7 @@ twitter_username: refactoringbyexample
 github_username:  refactoring-by-example
 
 # Build settings
-markdown: kramdown
-kramdown:
-  input: GFM
-  hard_wrap: false
+highlighter: rouge
 theme: minima
 gems:
   - jekyll-feed
