@@ -402,6 +402,7 @@ For brevity the `getProduct` function was retained in the same file. In practice
 In my opinion, the previous refactorings have made some palable improvements to the titles logic. An effective way to demonstrate that is to add a new requirement in the form of a DVD product type. Previously this would have involved modifying existing code by adding another if statement. Fortunately, after refactoring, there is no long conditional to change, just the additional of a new DVD abstraction.
 
 **Add DVD product type:**
+
 ```js
 const PRODUCTS = [
   NonFictionalBook,
@@ -418,6 +419,7 @@ const PRODUCTS = [
 You may have observed that, although minmial, the products array requires modification when adding or removing product types. Dynamically loading the product types would eradicate this completely. This must involve writing marginaly more complicated code, but should only have to be defined once.  
 
 **Replace the hardcoded products array with dynamically loaded types:**
+
 ```js
 const Filehound = require('filehound');
 
