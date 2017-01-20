@@ -23,6 +23,9 @@ github_username:  refactoring-by-example
 
 # Build settings
 markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
 theme: minima
 gems:
   - jekyll-feed
