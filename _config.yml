@@ -22,7 +22,7 @@ twitter_username: refactoringbyexample
 github_username:  refactoring-by-example
 
 # Build settings
-highlighter: rouge
+markdown: kramdown
 theme: minima
 gems:
   - jekyll-feed
