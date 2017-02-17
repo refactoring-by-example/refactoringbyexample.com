@@ -6,7 +6,7 @@ categories: javascript
 ---
 Long conditionals typically evolve as requirements grow. It’s natural, and in some cases, a seemingly a simple task to add another condition to an existing list of conditions. This is particular tempting to do when under pressure and deadlines are closing in. However, a “quick win” is not always the best solution. Following this approach can often lead to more complex code, adversely affecting readability and maintainability. This is likely to result in more brittle software.
 
-In addition, each time there is a new requirement (potentially a new condition) existing code will need to change.  This violates the open/close principle.  
+In addition, each time there is a new requirement (potentially a new condition) existing code will need to change. This violates the open/close principle.  
 
 The code below highlights the structure of a long conditional:
 
@@ -44,9 +44,9 @@ console.log(titles.subtitle);
 Although not mandatory, it's worth taking a few minutes to review the library. The source code for this library can be found at:
 https://github.com/nspragg/online-store
 
-Before making any changes it's imperitive to run the tests and ensure all tests are passing. I've ensured this by developing this project using "Test Driven Development" (TDD). Having a comprehensive suite of tests allows refactoring to be performed with greater confidence.
+Before making any changes it's imperative to run the tests and ensure all tests are passing. I've ensured this by developing this project using "Test Driven Development" (TDD). Having a comprehensive suite of tests allows refactoring to be performed with greater confidence.
 
-Here is an example of tests
+Here is an example of the tests:
 
 ```js
 describe('Titles', () => {
@@ -115,7 +115,7 @@ module.exports = (data) => {
 };
 ```
 
-The first observation is that there are serveral hard coded string literals. These would benefit from only being defined once, as string constants. This may seem like a trival refactor, but it's often worth starting with a small, simple change. The Chinese philosopher Lao stated, "a journey of a thousand miles begins with a single step".   
+The first observation is that there are several hard coded string literals. These would benefit from only being defined once, as string constants. This may seem like a trivial refactor, but it's often worth starting with a small, simple change. The Chinese philosopher Lao stated, "a journey of a thousand miles begins with a single step".   
 
 **With the string constants, the code now looks like:**
 
@@ -160,7 +160,7 @@ module.exports = (data) => {
 };
 ```
 
-Conditionals can often be simplified and more clearly expressed when given a descriptive name. This is typically acheived by extracting the condition and assigning it to a variable or creating a wrapper function (encapsulating the conditional). Either would work in this case. Lets opt for the former.
+Conditionals can often be simplified and more clearly expressed when given a descriptive name. This is typically achieved by extracting the condition and assigning it to a variable or creating a wrapper function (encapsulating the conditional). Either would work in this case. Lets opt for the former.
 
 **Assign conditionals to variables:**
 
@@ -271,7 +271,7 @@ module.exports = (data) => {
 };
 ```
 
-The previous refactor has made each block responsible for building a titles object. In other words, each block has knowledge of title state and behaviour (how titles are built). This is better representated as a titles abstraction.
+The previous refactor has made each block responsible for building a titles object. In other words, each block has knowledge of title state and behaviour (how titles are built). This is better represented as a titles abstraction.
 
 For example, a Film class:
 
@@ -326,9 +326,9 @@ module.exports = (data) => {
 };
 ```
 
-The titles logic has been improved but the most pertinent refactor is outstanding. That is, this code breaks the open/close principle. Everytime there is a new requirement the existing code requirements modification. For example, a new product type 'pc game' was required, a new PCGame class would need to be implemented *and* if/else's would require modification. i.e new condition.    
+The titles logic has been improved but the most pertinent refactor is outstanding. That is, this code breaks the open/close principle. Every time there is a new requirement the existing code requirements modification. For example, a new product type 'pc game' was required, a new PCGame class would need to be implemented *and* if/else's would require modification. i.e new condition.    
 
-What's the fix? A pragmatic solution would be to make each title abstraction responsible for knowing if it's a match on the current data. This could be implemented by encapsulating the conditional in a static (class) method. That way, the caller doesn't have to instanstiate the title class unless it's a match. For example, an `.isMatch(data)` static
+What's the fix? A pragmatic solution would be to make each title abstraction responsible for knowing if it's a match on the current data. This could be implemented by encapsulating the conditional in a static (class) method. That way, the caller doesn't have to instantiate the title class unless it's a match. For example, an `.isMatch(data)` static
 
 This is also a good opportunity to extract the logic that creates the titles abstraction to a factory function.
 
