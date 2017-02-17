@@ -293,7 +293,7 @@ class Film {
 }
 ```
 
-**Implement all titles abtractions:**
+**Implement all titles abstractions:**
 
 ```js
 module.exports = (data) => {
