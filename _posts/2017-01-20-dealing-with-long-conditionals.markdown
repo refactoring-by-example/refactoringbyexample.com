@@ -113,8 +113,6 @@ module.exports = (data) => {
 
   return titles;
 };
-
-};
 ```
 
 The first observation is that there are serveral hard coded string literals. These would benefit from only being defined once, as string constants. This may seem like a trival refactor, but it's often worth starting with a small, simple change. The Chinese philosopher Lao stated, "a journey of a thousand miles begins with a single step".   
@@ -330,9 +328,9 @@ module.exports = (data) => {
 
 The titles logic has been improved but the most pertinent refactor is outstanding. That is, this code breaks the open/close principle. Everytime there is a new requirement the existing code requirements modification. For example, a new product type 'pc game' was required, a new PCGame class would need to be implemented *and* if/else's would require modification. i.e new condition.    
 
-What's the fix? A pragmatic solution would be to make each title abstraction responsible for knowing if it's a match on the current data. This could be implemented by encapsulating the conditional in a static (class) method. That way, the caller doesn't have to instanstiate the title class unless it's a match. For example, an `isMatch(data)` static
+What's the fix? A pragmatic solution would be to make each title abstraction responsible for knowing if it's a match on the current data. This could be implemented by encapsulating the conditional in a static (class) method. That way, the caller doesn't have to instanstiate the title class unless it's a match. For example, an `.isMatch(data)` static
 
-This is also a good opportunity to extract the logic that creates the titles abtraction to a factory function.
+This is also a good opportunity to extract the logic that creates the titles abstraction to a factory function.
 
 **Using a static isMatch method and a factory:**
 
@@ -367,7 +365,7 @@ module.exports = (data) => {
 };
 ```
 
-The last refactor is only an intermediary step, as we still have a conditional list for the `isMatch` calls. The conditional could be removed by iterating over a list of title abstractions (constructor references) until we have a matching. The matching abtraction can then be instantiated and returned by `getProduct`. The default can be returned if a match is not found.    
+The last refactor is only an intermediary step, as we still have a conditional list for the `isMatch` calls. The conditional could be removed by iterating over a list of title abstractions (constructor references) until we have a match. The matching abstraction can then be instantiated and returned by `getProduct`. The default can be returned if a match is not found.    
 
 **Removing the conditional:**
 
@@ -399,7 +397,7 @@ module.exports = (data) => {
 
 For brevity the `getProduct` function was retained in the same file. In practice it would be worth considering extracting this to a separate file, completing decoupling the product factory from the logic that invokes it.
 
-In my opinion, the previous refactorings have made some palable improvements to the titles logic. An effective way to demonstrate that is to add a new requirement in the form of a DVD product type. Previously this would have involved modifying existing code by adding another if statement. Fortunately, after refactoring, there is no long conditional to change, just the additional of a new DVD abstraction.
+In my opinion, the previous refactoring has made some palpable improvements to the titles logic. An effective way to demonstrate that is to add a new requirement in the form of a DVD product type. Previously this would have involved modifying existing code by adding another if statement. Fortunately, after refactoring, there is no long conditional to change, just the additional of a new DVD abstraction.
 
 **Add DVD product type:**
 
@@ -416,7 +414,7 @@ const PRODUCTS = [
 // rest of getProduct remains unchanged
 ```
 
-You may have observed that, although minmial, the products array requires modification when adding or removing product types. Dynamically loading the product types would eradicate this completely. This must involve writing marginaly more complicated code, but should only have to be defined once.  
+You may have observed that, although minimal, the products array requires modification when adding or removing product types. Dynamically loading the product types would eradicate this completely. This may involve writing marginally more complicated code, but should only have to be defined once.  
 
 **Replace the hardcoded products array with dynamically loaded types:**
 
@@ -431,6 +429,6 @@ const PRODUCTS = Filehound.create()
   .map((product) => require(product));
 ```
 
-In summary, the refactoring steps performed have simplied and decoupled the code. Hopefully you should agree that the titles object more extensible and easier on the eye. Then again, beauty is in the eye of the beholder.
+In summary, the refactoring steps performed have simplified and decoupled the code. Hopefully you agree that the titles object more extensible and easier on the eye. Then again, beauty is in the eye of the beholder.
 
 Thanks for reading.
