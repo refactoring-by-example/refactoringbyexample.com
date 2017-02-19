@@ -9,7 +9,7 @@ title: About
 
 Refactoring is an important tool in any developer's toolbox. It's the key to turning bad code into clean code. Our mission is to showcase practical examples that help you master the art of refactoring.
 
-All of our examples are adapted from code in real production applications. The domain may have been changed, but the structure of the code and the refactoring approach has not.
+All of our examples are adapted from code in real production applications. The problem domain may have been changed, but the structure of the code and the refactoring approach has not.
 
 ---
 
