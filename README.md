@@ -6,7 +6,7 @@ Refactoring is an important tool in any developer's toolbox. It's the key to tur
 
 All of our examples are adapted from code in real production applications. The problem domain may have been changed, but the structure of the code and the refactoring approach has not.
 
-Visit ** [refactoringbyexample.com](http://www.refactoringbyexample.com) 🌐**
+**Visit  [refactoringbyexample.com](http://www.refactoringbyexample.com) 🌐**
 
 ## Contributing 📝
 
