@@ -15,4 +15,4 @@ All of our examples are adapted from code in real production applications. The d
 
 ## Contributing
 
-To propose an example, [open an issue](https://github.com/refactoring-by-example/refactoringbyexample.com/issues/new) on our GitHub repo with a short description of your post for review.
+We welcome contributions. If you have a refactoring example to share, [open a new issue](https://github.com/refactoring-by-example/refactoringbyexample.com/issues/new) on our GitHub repo and tell us a bit about your proposed post. If your proposal is accepted, write your post up in Mardown format in the `_posts` directory and submit it as a pull request.
