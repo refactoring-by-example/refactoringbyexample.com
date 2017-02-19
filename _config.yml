@@ -3,8 +3,8 @@ email: hello@refactoringbyexample.com
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://refactoringbyexample.com"
 title: Refactoring by Example
-tagline: Real life refactoring examples
-description: Practical examples of refactoring in the wild
+tagline: Practical refactoring examples
+description: Practical refactoring examples
 url: http://www.refactoringbyexample.com
 paginate: 5
 permalink: /:year/:month/:title/
@@ -17,3 +17,5 @@ gems:
 exclude:
   - Gemfile
   - Gemfile.lock
+github:
+  repo: https://github.com/refactoring-by-example/refactoringbyexample.com

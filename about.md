@@ -3,28 +3,16 @@ layout: page
 title: About
 ---
 
-<p class="message">
-  Hey there! This page is included as an example. Feel free to customize it for your own use upon downloading. Carry on!
-</p>
+> Refactoring is a controlled technique for improving the design of an existing code base. Its essence is applying a series of small behavior-preserving transformations, each of which "too small to be worth doing". However the cumulative effect of each of these transformations is quite significant.
+>
+> _[Refactoring](https://martinfowler.com/books/refactoring.html) – Martin Fowler_
 
-In the novel, *The Strange Case of Dr. Jeykll and Mr. Hyde*, Mr. Poole is Dr. Jekyll's virtuous and loyal butler. Similarly, Poole is an upstanding and effective butler that helps you build Jekyll themes. It's made by [@mdo](https://twitter.com/mdo).
+Refactoring is an important tool in any developer's toolbox. It's the key to turning bad code into clean code. Our mission is to showcase practical examples that help you master the art of refactoring.
 
-There are currently two themes built on Poole:
+All of our examples are adapted from code in real production applications. The domain may have been changed, but the structure of the code and the refactoring approach has not.
 
-* [Hyde](http://hyde.getpoole.com)
-* [Lanyon](http://lanyon.getpoole.com)
+---
 
-Learn more and contribute on [GitHub](https://github.com/poole).
+## Contributing
 
-## Setup
-
-Some fun facts about the setup of this project include:
-
-* Built for [Jekyll](http://jekyllrb.com)
-* Developed on GitHub and hosted for free on [GitHub Pages](https://pages.github.com)
-* Coded with [Sublime Text 2](http://sublimetext.com), an amazing code editor
-* Designed and developed while listening to music like [Blood Bros Trilogy](https://soundcloud.com/maddecent/sets/blood-bros-series)
-
-Have questions or suggestions? Feel free to [open an issue on GitHub](https://github.com/poole/issues/new) or [ask me on Twitter](https://twitter.com/mdo).
-
-Thanks for reading!
+To propose an example, [open an issue](https://github.com/refactoring-by-example/refactoringbyexample.com/issues/new) on our GitHub repo with a short description of your post for review.
