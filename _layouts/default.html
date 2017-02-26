@@ -3,7 +3,7 @@
 
   {% include head.html %}
 
-  <body class="theme-base-08">
+  <body class="theme-refactoring-by-example">
 
     {% include sidebar.html %}
 
@@ -13,8 +13,9 @@
       <div class="masthead">
         <div class="container">
           <h3 class="masthead-title">
-            <a href="{{ site.baseurl }}/" title="Home">{{ site.title }}</a>
-            <small>{{ site.tagline }}</small>
+            <a href="{{ site.baseurl }}/" title="Home">
+              <img src="{{ site.baseurl }}/public/images/masthead.svg" class="logo" alt="Refactoring by Example" onerror="this.src='{{ site.baseurl }}/public/images/masthead@2x.png'; this.onerror=null;"/>
+            </a>
           </h3>
         </div>
       </div>
