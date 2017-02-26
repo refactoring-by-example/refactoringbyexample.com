@@ -42,7 +42,7 @@ console.log(titles.title);
 console.log(titles.subtitle);
 ```
 Although not mandatory, it's worth taking a few minutes to review the library. The source code for this library can be found at:
-https://github.com/nspragg/online-store
+https://github.com/refactoring-by-example/long-conditionals
 
 Before making any changes it's imperative to run the tests and ensure all tests are passing. I've ensured this by developing this project using "Test Driven Development" (TDD). Having a comprehensive suite of tests allows refactoring to be performed with greater confidence.
 
