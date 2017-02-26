@@ -3,6 +3,7 @@ layout: post
 title:  "Dealing with long conditionals"
 date:   2017-01-20 09:48:55 +0000
 categories: javascript
+author: nspragg
 ---
 Long conditionals typically evolve as requirements grow. It’s natural, and in some cases, a seemingly a simple task to add another condition to an existing list of conditions. This is particular tempting to do when under pressure and deadlines are closing in. However, a “quick win” is not always the best solution. Following this approach can often lead to more complex code, adversely affecting readability and maintainability. This is likely to result in more brittle software.
 

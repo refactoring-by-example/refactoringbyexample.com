@@ -1,15 +1,18 @@
 ---
 layout: page
 title: About
-permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
+> Refactoring is a controlled technique for improving the design of an existing code base. Its essence is applying a series of small behavior-preserving transformations, each of which "too small to be worth doing". However the cumulative effect of each of these transformations is quite significant.
+>
+> _[Refactoring](https://martinfowler.com/books/refactoring.html) – Martin Fowler_
 
-You can find the source code for the Jekyll new theme at:
-{% include icon-github.html username="jekyll" %} /
-[minima](https://github.com/jekyll/minima)
+Refactoring is an important tool in any developer's toolbox. It's the key to turning bad code into clean code. Our mission is to showcase practical examples that help you master the art of refactoring.
 
-You can find the source code for Jekyll at
-{% include icon-github.html username="jekyll" %} /
-[jekyll](https://github.com/jekyll/jekyll)
+All of our examples are adapted from code in real production applications. The problem domain may have been changed, but the structure of the code and the refactoring approach has not.
+
+---
+
+## Contributing
+
+We welcome contributions. If you have a refactoring example to share, [open a new issue](https://github.com/refactoring-by-example/refactoringbyexample.com/issues/new) on our GitHub repo and tell us a bit about your proposed post. If your proposal is accepted, write your post up in Markdown format in the `_posts` directory and submit it as a pull request.
