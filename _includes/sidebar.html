@@ -5,7 +5,10 @@
 <!-- Toggleable sidebar -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-item">
-    <p>{{ site.description }}</p>
+    <a href="{{ site.baseurl }}/" class="sidebar-logo">
+      <img src="{{ site.baseurl }}/public/images/logo-white.svg" alt="" onerror="this.src='{{ site.baseurl }}/public/images/logo-white@2x.png'; this.onerror=null;"/>
+    </a>
+    <p class="sidebar-description">{{ site.description }}</p>
   </div>
 
   <nav class="sidebar-nav">
