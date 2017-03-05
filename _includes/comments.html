@@ -1,6 +1,7 @@
 <div id="disqus_thread"></div>
 <script>
-// var disqus_developer = 1;
+var developer_mode = (window.location.host === '127.0.0.1:4000');
+var disqus_developer = developer_mode ? 1 : 0;
 var disqus_config = function () {
   this.page.url = '{{ site.url }}{{ page.url | replace:"index.html","" }}';
   this.page.identifier = '{{ page.id }}';
