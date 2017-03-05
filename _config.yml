@@ -10,6 +10,8 @@ paginate: 5
 permalink: /:year/:month/:title/
 markdown: kramdown
 theme: minima
+analytics:
+  id: "UA-93047488-1"
 gems:
   - jekyll-feed
   - jekyll-paginate
