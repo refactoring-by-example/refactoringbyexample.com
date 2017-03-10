@@ -82,8 +82,6 @@ So, lets take a look at the original version of the titles module:
 ```js
 'use strict';
 
-const util = require('util');
-
 module.exports = (data) => {
   const titles = {};
   const productType = data.productType;
@@ -91,7 +89,7 @@ module.exports = (data) => {
 
   if (productType === 'book' && kind === 'non-fiction') {
     titles.title = data.bookTitle;
-    titles.subtitle = util.format("%s (%s)", data.author, data.year);
+    titles.subtitle = `${data.author} (${data.year})`;
 
   } else if (productType === 'book' && kind === 'travel-guide') {
     titles.title = `${data.publisher}: ${data.city}`;
