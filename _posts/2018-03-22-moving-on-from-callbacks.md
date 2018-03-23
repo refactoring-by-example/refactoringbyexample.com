@@ -67,8 +67,8 @@ module.exports.fetch = (cb) => {
 Refactoring code like this can be tricky because it contains serveral async `patterns`. To simplify the refactor, it's useful to break down the logic into steps and identify any patterns. 
 
 The `.fetch` using an `async.waterfall`, sequentially executes the following steps (as an array of function references):
- * Makes calls to multiple endpoints in `parallel` and aggregates the results into an results object. Each key mapping to the results of an API call 
- * Converts raw data into the products model objects (eg dvd) and removes any blacklist (banned) items.
+ * Requests raw product data in `parallel` (from different API end points) and aggregates the results into an object. Each keys maps to an API response
+ * Creates the product model objects (eg dvd) from the fetched raw data and removes any blacklisted (banned) items.
  * Fetches stock metadata from the products using an asynchronous `map` 
  * Merges stock data with the product and writes `each` product model to the product database
 
@@ -158,7 +158,7 @@ The blacklist was originally included in the `.parallel` call for convenience. B
 const [blacklist, productSourceData] = await Promise.all([getBlacklist(), getProductData()]);
 ```
 
-## Create products and filter
+## Create products and apply blacklist filter
 The logic to create the product model and filter blacklisted items is synchronous and can be reused:
 
 ```js
@@ -186,7 +186,7 @@ async function getStockData(products) {
 
 `getStockData` will request the stock data in parallel returning a promise, which if successful, will fulfil to an array of stock responses. The resulting code should look intuitive and didn't require any third party libraries.
 
-## Merge product and stock data
+## Merge product/stock data and update database
 ```js
  (products, stocks, done) => {
             for (const [i, product] of products.entries()) {
