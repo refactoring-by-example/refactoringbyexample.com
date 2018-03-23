@@ -5,24 +5,25 @@ date:   2018-03-22 09:48:55 +0000
 categories: javascript
 author: nspragg
 ---
-Software typically changes over to time to meet new requirements, patch faults and address feeback from users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
+Software typically changes over to time to meet new requirements, patch faults and address feeback from users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous programming in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
 
-Following on from refactoring an online media store ([Dealing with long conditiontionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to `async functions` and the `await` operator.   
+Following on from refactoring an online media store ([Dealing with long conditiontionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to async/await. 
 
-The online media store uses an offline component, `DataFetcher`, to fetch and construct product models, which it writes to a product database. The source code for the `DataFetcher` can be found [here](https://github.com/refactoring-by-example/using-async-functions)
+The online media store uses an offline component, `DataFetcher` module, to fetch and construct product models, which it writes to a product database. The source code for the `DataFetcher` can be found [here](https://github.com/refactoring-by-example/using-async-functions)
 
-For example: module usage 
+The DataFetcher module is used like this:
 
 ```js
  dataFetcher.fetch((err) => {
    if (err) {
      console.error(err)
    }
-   // no err indicates the database has been updated successfully. 
+   // no err indicates the database has been updated successfully
+   // with the latest products. 
  });
 ```
 
-For example: the `.fetch` method that does most of the work:
+The `.fetch` method does most of the work:
 
 ```js
 module.exports.fetch = (cb) => {
@@ -67,10 +68,10 @@ module.exports.fetch = (cb) => {
 Refactoring code like this can be tricky because it contains serveral async `patterns`. To simplify the refactor, it's useful to break down the logic into steps and identify any patterns. 
 
 The `.fetch` using an `async.waterfall`, sequentially executes the following steps (as an array of function references):
- * Requests raw product data in `parallel` (from different API end points) and aggregates the results into an object. Each keys maps to an API response
+ * Requests raw product data in `parallel` (from different API end points) and aggregates the results into an object. Each key maps to an API response
  * Creates the product model objects (eg dvd) from the fetched raw data and removes any blacklisted (banned) items.
- * Fetches stock metadata from the products using an asynchronous `map` 
- * Merges stock data with the product and writes `each` product model to the product database
+ * Fetches stock (inventory) metadata for the products using an asynchronous `map` 
+ * Merges stock data with the product models and writes `each` product model to the product database
 
  Wow that's a lot of responsibility for a single function! Lets break down each step and use async/await where appropriate. 
 
