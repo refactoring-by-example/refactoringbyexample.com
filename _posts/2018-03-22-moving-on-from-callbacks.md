@@ -73,9 +73,9 @@ The `.fetch` using an `async.waterfall`, sequentially executes the following ste
  * Fetches stock (inventory) metadata for the products using an asynchronous `map` 
  * Merges stock data with the product models and writes `each` product model to the product database
 
- Wow that's a lot of responsibility for a single function! Lets break down each step and use async/await where appropriate. 
+ Wow, that's a lot of responsibility for a single function! Lets break down each step and use async/await where appropriate. 
 
-## Parallel requests
+### Parallel requests
 ```js
 async.parallel({
         book: getBooks,
@@ -107,7 +107,6 @@ It's worth noting that in practice the first step should be to refactor the corr
 Let's start by converting the fetching functions to async functions by preceding the function name with `async` and `promisifying` request. Let's refactor `getBooks` as an example:
 
 ```js
-
 const request = require('request').defaults({ json: true });
 request.get = utils.promisify(request.get);
 
@@ -128,7 +127,7 @@ async function getBooks() {
 }
 ```
 
-Since request now returns a promise, `await` can be used be suspend the function execution until the promise return by `.get` is fulfilled. If successful, the function will resume execution and assign the fulfilment value to `res`. On failure, an error will be thrown. Several points are worth noting; first, the return type of an async function is an promise. In this case, res will be returned to the caller wrapped in a promise. Secondly, `await` can only be invoked from within an `async` function. Thirdly, when awaiting an async function, errors can be caught using a [try catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch). This greatly enhances readability and is likely to be natural to many developers.  
+Since request now returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), `await` can be used be suspend the function execution until the promise return by `.get` is fulfilled. If successful, the function will resume execution and assign the fulfilment value to `res`. On failure, an error will be thrown. Several points are worth noting; first, the return type of an async function is an promise. In this case, res will be returned to the caller wrapped in a promise. Secondly, `await` can only be invoked from within an `async` function. Thirdly, when awaiting an async function, errors can be caught using a [try catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch). This greatly enhances readability and is likely to be natural to many developers.  
 
 Once all the supporting functions have been converted to async functions, the next stage is to execute the requests in parallel and aggregate the responses in a object. Rather than modifying this logic in the `.fetch`, we'll extract it to it's own function:
 
@@ -151,22 +150,22 @@ async function getProductData() {
     }, productSourceData);
 ```
 
-`getProductData` creates an object of string (productType) to `Promise`. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulful or will throw an error. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to pass the accumulator as a promise since the return value of an async function is a promise.  
+`getProductData` creates an object of string (productType) to Promise. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulful or will throw an error if one of the requests fails. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to await the accumulator value as the return value of an async function is a promise.   
 
-The blacklist was originally included in the `.parallel` call for convenience. By using `await` and `Promise.all`, this is not neccessary are the calls can be made independently. This is a cleaner solution: 
+The blacklist was originally included in the `.parallel` call for convenience. By using `await` and `Promise.all`, this is not neccessary are the calls can be made independently. This is a significantly cleaner solution: 
 
 ```js
 const [blacklist, productSourceData] = await Promise.all([getBlacklist(), getProductData()]);
 ```
 
-## Create products and apply blacklist filter
+### Create products and apply blacklist filter
 The logic to create the product model and filter blacklisted items is synchronous and can be reused:
 
 ```js
 const products = filterByBlacklist(createProducts(productSourceData), blacklist);
 ```
 
-## Fetch stock data for the products
+### Fetch stock data for the products
 ```js
 (products, done) => {
     async.map(products, (product, cb) => {
@@ -187,7 +186,7 @@ async function getStockData(products) {
 
 `getStockData` will request the stock data in parallel returning a promise, which if successful, will fulfil to an array of stock responses. The resulting code should look intuitive and didn't require any third party libraries.
 
-## Merge product/stock data and update database
+### Merge product/stock data and update database
 ```js
  (products, stocks, done) => {
             for (const [i, product] of products.entries()) {
