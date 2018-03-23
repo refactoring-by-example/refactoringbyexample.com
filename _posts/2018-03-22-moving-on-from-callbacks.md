@@ -5,7 +5,7 @@ date:   2018-03-22 09:48:55 +0000
 categories: javascript
 author: nspragg
 ---
-Software typically changes over to time to meet new requirements, patch faults and address feeback from the users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
+Software typically changes over to time to meet new requirements, patch faults and address feeback from users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
 
 Following on from refactoring an online media store ([Dealing with long conditiontionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to `async functions` and the `await` operator.   
 
