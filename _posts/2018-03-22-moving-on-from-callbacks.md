@@ -7,9 +7,9 @@ author: nspragg
 ---
 Software typically changes over to time to meet new requirements, patch faults and address feeback from the users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
 
-Following on from refactoring an online media store ([Dealing with long conditiontionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to async/await.   
+Following on from refactoring an online media store ([Dealing with long conditiontionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to `async functions` and the `await` operator.   
 
-The online media store uses an offline component, `DataFetcher`, to fetch and construct product models, which it writes to a product database. 
+The online media store uses an offline component, `DataFetcher`, to fetch and construct product models, which it writes to a product database. The source code for the `DataFetcher` can be found [here](https://github.com/refactoring-by-example/using-async-functions)
 
 For example: module usage 
 
@@ -18,11 +18,11 @@ For example: module usage
    if (err) {
      console.error(err)
    }
-   // no err indicates success
+   // no err indicates the database has been updated successfully. 
  });
 ```
 
-For example: the `.fetch` method that does most of the work
+For example: the `.fetch` method that does most of the work:
 
 ```js
 module.exports.fetch = (cb) => {
@@ -51,8 +51,8 @@ module.exports.fetch = (cb) => {
         },
         (products, stocks, done) => {
             for (const [i, product] of products.entries()) {
-                product['price'] = stocks[i].price;
-                product['quantity'] = stocks[i].quantity;
+                product.price = stocks[i].price;
+                product.quantity = stocks[i].quantity;
             }
             done(null, products);
         }
@@ -66,16 +66,15 @@ module.exports.fetch = (cb) => {
 
 Refactoring code like this can be tricky because it contains serveral async `patterns`. To simplify the refactor, it's useful to break down the logic into steps and identify any patterns. 
 
-The `.fetch` does the following:
- * Sequentially executes an array functions, passing data from one to another. i.e `waterfall`
+The `.fetch` using an `async.waterfall`, sequentially executes the following steps (as an array of function references):
  * Makes calls to multiple endpoints in `parallel` and aggregates the results into an results object. Each key mapping to the results of an API call 
- * Converts raw data into the products model objects (eg dvd) and removes any blaclisted items.
+ * Converts raw data into the products model objects (eg dvd) and removes any blacklist (banned) items.
  * Fetches stock metadata from the products using an asynchronous `map` 
  * Merges stock data with the product and writes `each` product model to the product database
 
- Wow that's alot of responsibility for a single function! Lets break down each step and use async/await where appropriate. 
+ Wow that's a lot of responsibility for a single function! Lets break down each step and use async/await where appropriate. 
 
-### Parallel requests
+## Parallel requests
 ```js
 async.parallel({
         book: getBooks,
@@ -102,7 +101,9 @@ function getBooks(cb) {
 }
 ```
 
-The first step is to convert the functions to async functions by preceding the function name with `async` and `promisifying` request:
+It's worth noting that in practice the first step should be to refactor the corresponding test. However, for reasons of brevity, we'll focus on the main library. 
+
+Let's start by converting the fetching functions to async functions by preceding the function name with `async` and `promisifying` request. Let's refactor `getBooks` as an example:
 
 ```js
 
@@ -114,7 +115,7 @@ async function getBooks() {
 }
 ```
 
-Next, await the response and add error handling logic:
+Next, `await` the response and add http response code error handling:
 
 ```js
 async function getBooks() {
@@ -151,21 +152,32 @@ async function getProductData() {
 
 `getProductData` creates an object of string (productType) to `Promise`. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulful or will throw an error. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to pass the accumulator as a promise since the return value of an async function is a promise.  
 
-The blacklist was originally included in the `.parallel` for convenience. Using async/await, this is not nessessary and  can be called separately. Similarly, `Promise.all` is used to sychronise the parallel requests:
+The blacklist was originally included in the `.parallel` call for convenience. By using `await` and `Promise.all`, this is not neccessary are the calls can be made independently. This is a cleaner solution: 
 
 ```js
-let blacklist = getBlacklist();
-let productSourceData = getProductData();
-[blacklist, productSourceData] = await Promise.all([blacklist, productSourceData]);
+const [blacklist, productSourceData] = await Promise.all([getBlacklist(), getProductData()]);
 ```
 
+## Create products and filter
 The logic to create the product model and filter blacklisted items is synchronous and can be reused:
 
 ```js
 const products = filterByBlacklist(createProducts(productSourceData), blacklist);
 ```
 
-Next the stock data can be fetched by mapping over the products:
+## Fetch stock data for the products
+```js
+(products, done) => {
+    async.map(products, (product, cb) => {
+                getStocks(product.id, cb);
+    }, (err, stocks) => {
+    if (err) return done(err);
+    done(null, products, stocks);
+    });
+}
+```
+The above asynchonously maps over the products fetching the stock data via the product id. This would benefit from being extracted to a named function:
+
 ```js
 async function getStockData(products) {
     return Promise.all(products.map((product) => getStocks(product.id)));
@@ -174,7 +186,19 @@ async function getStockData(products) {
 
 `getStockData` will request the stock data in parallel returning a promise, which if successful, will fulfil to an array of stock responses. The resulting code should look intuitive and didn't require any third party libraries.
 
-Finally, the product and stock information can be merged. Makes sense to extract this logic:
+## Merge product and stock data
+```js
+ (products, stocks, done) => {
+            for (const [i, product] of products.entries()) {
+                product.price = stocks[i].price;
+                product.quantity = stocks[i].quantity;
+            }
+            done(null, products);
+        }
+```
+
+Mering product and stock data is useable but is more clearly defined as a named function:
+
 ```js
 function merge(products, stocks) {
     for (const [i, product] of products.entries()) {
@@ -206,21 +230,24 @@ A combination of `await`, `Promise.all` and `map` can be used to migitate this:
 return await Promise.all(merge(products, stocks).map(dao.save));
 ```
 
-A refactored `.fetch` in it's entirely would look like this:
+A refactored [`.fetch`](https://github.com/refactoring-by-example/using-async-functions/blob/async-await/lib/dataFetcher.js#L180) in it's entirely would look like this:
 
 ```js
 module.exports.fetch = async () => {
-    let blacklist = getBlacklist();
-    let productSourceData = getProductData();
-    [blacklist, productSourceData] = await Promise.all([blacklist, productSourceData]);
+    const [blacklist, productSourceData] = await Promise.all([getBlacklist(), getProductData()]);
 
-    const products = filterByBlacklist(createProducts(productSourceData), blacklist);
-    const stocks = await getStockData(products);
+    const products = createProducts(productSourceData);
+    const filteredProducts = filterByBlacklist(products, blacklist);
+    const stocks = await getStockData(filteredProducts);
 
     return await Promise.all(merge(products, stocks).map(dao.save));
 };
 ```
 
-By utilising a combination of more recent language features (primarily async/await) and function extraction, the implementation of `.fetch` is noticably more clear, concise and doesn't require external dependancies. 
+This variant of the `.fetch` is noticability more clear and concise. This has largely been achieved by extracting code into named (async) functions and waiting on asynchronous operations, where necessary, using `await`. 
+
+Error handling has been improved as try/catch blocks can be consistently used for synchronous and asynchronous logic. This is arguably more inititive than the error handling convention used with callbacks. 
+
+The use of third party a library for control flow like `waterfall` and other asynchronous patterns are redundant as these can be easily implemented using native `Javascript`. However, some patterns, particularly ones limiting concurrency are more envolved. For more complicated behaviour it may be worth evalating an existing `Promise` libray such as `Bluebird`. 
 
 Thanks for reading.
