@@ -7,7 +7,7 @@ author: nspragg
 ---
 Software typically changes over to time to meet new requirements, patch faults and address feeback from users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous programming in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
 
-Following on from refactoring an online media store ([Dealing with long conditiontionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to async/await. 
+Following on from refactoring an online media store ([Dealing with long conditionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to async/await. 
 
 The online media store uses an offline component, `DataFetcher` module, to fetch and construct product models, which it writes to a product database. The source code for the `DataFetcher` can be found [here](https://github.com/refactoring-by-example/using-async-functions)
 
@@ -68,8 +68,8 @@ module.exports.fetch = (cb) => {
 Refactoring code like this can be tricky because it contains serveral async `patterns`. To simplify the refactor, it's useful to break down the logic into steps and identify any patterns. 
 
 The `.fetch` using an `async.waterfall`, sequentially executes the following steps (as an array of function references):
- * Requests raw product data in `parallel` (from different API end points) and aggregates the results into an object. Each key maps to an API response
- * Creates the product model objects (eg dvd) from the fetched raw data and removes any blacklisted (banned) items.
+ * Requests raw product data in `parallel` (from different API endpoints) and aggregates the results into an object. Each key maps to an API response
+ * Creates the product model objects (e.g dvd) from the fetched raw data and removes any blacklisted (banned) items.
  * Fetches stock (inventory) metadata for the products using an asynchronous `map` 
  * Merges stock data with the product models and writes `each` product model to the product database
 
@@ -88,7 +88,7 @@ async.parallel({
 });
 ```
 
-`.parallel` accepts an object which maps a string to a fetching function. The callback either yields with an error (if any requests fail) or an object containing the same keys but mapped to the results of each function invocation. The fetching functions are **very** similar. Here is an example: 
+`.parallel` accepts an object which maps a string to a fetching function. The callback either yields with an error (if any requests fail) or an object containing the same keys, but mapped to the results of each function invocation. The fetching functions are **very** similar. Here is an example: 
 
 ```js
 function getBooks(cb) {
@@ -169,14 +169,14 @@ const products = filterByBlacklist(createProducts(productSourceData), blacklist)
 ```js
 (products, done) => {
     async.map(products, (product, cb) => {
-                getStocks(product.id, cb);
+        getStocks(product.id, cb);
     }, (err, stocks) => {
-    if (err) return done(err);
-    done(null, products, stocks);
+        if (err) return done(err);
+        done(null, products, stocks);
     });
 }
 ```
-The above asynchonously maps over the products fetching the stock data via the product id. Readability would greatly be enhanced by extracting this log to a named function:
+The above asynchonously maps over the products fetching the stock data via the product id. Readability would greatly be enhanced by extracting this logic to a named function:
 
 ```js
 async function getStockData(products) {
@@ -196,15 +196,16 @@ async function getStockData(products) {
 ### Merge product/stock data and update database
 ```js
  (products, stocks, done) => {
-            for (const [i, product] of products.entries()) {
-                product.price = stocks[i].price;
-                product.quantity = stocks[i].quantity;
-            }
-            done(null, products);
-        }
+     for (const [i, product] of products.entries()) {
+         product.price = stocks[i].price;
+         product.quantity = stocks[i].quantity;
+     }
+     
+     done(null, products);
+  }
 ```
 
-Mering product and stock data is useable but is more clearly defined as a named function:
+This is useable, but is more clearly defined as a named function:
 
 ```js
 function merge(products, stocks) {
@@ -251,10 +252,10 @@ module.exports.fetch = async () => {
 };
 ```
 
-This variant of the `.fetch` is noticability more clear and concise. This has largely been achieved by extracting code into named (async) functions and waiting on asynchronous operations, where necessary, using `await`. 
+This variant of the `.fetch` is noticability more clear and concise. This has largely been achieved by extracting code into named, async functions and waiting on asynchronous operations, where necessary, using `await`. 
 
-Error handling has been improved as try/catch blocks can be consistently used for synchronous and asynchronous logic. This is arguably more inititive than the error handling convention used with callbacks. 
+Error handling has been improved as try/catch blocks can be consistently used for synchronous and asynchronous logic. This is arguably more inituitive than the error handling convention used with callbacks. 
 
-The use of third party a library for control flow like `waterfall` and other asynchronous patterns are redundant as these can be easily implemented using native `Javascript`. However, some patterns, particularly ones limiting concurrency are more envolved. For more complicated behaviour it may be worth evalating an existing `Promise` libray such as `Bluebird`. 
+The use of third party a library for control flow like `waterfall` and other asynchronous patterns are redundant as these can be easily implemented using native `JavaScript`. However, some patterns, particularly ones limiting concurrency are more envolved. For more complicated behaviour it may be worth evalating an existing `Promise` libray such as [bluebird](http://bluebirdjs.com/docs/getting-started.html). 
 
 Thanks for reading.
