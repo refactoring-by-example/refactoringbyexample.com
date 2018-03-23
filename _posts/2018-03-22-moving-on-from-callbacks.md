@@ -176,8 +176,15 @@ const products = filterByBlacklist(createProducts(productSourceData), blacklist)
     });
 }
 ```
-The above asynchonously maps over the products fetching the stock data via the product id. This would benefit from being extracted to a named function:
+The above asynchonously maps over the products fetching the stock data via the product id. Readability would greatly be enhanced by extracting this log to a named function:
 
+```js
+async function getStockData(products) {
+    // logic to fetch stock data
+}
+```
+
+Now, refactor to use the native `Array.map`:
 ```js
 async function getStockData(products) {
     return Promise.all(products.map((product) => getStocks(product.id)));
