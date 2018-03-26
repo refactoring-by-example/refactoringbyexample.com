@@ -174,7 +174,9 @@ async function getProductData() {
     const productSourceData = Promise.resolve({})
     const keys = Object.keys(requests);
     return reduce(keys, async (acc, key) => {
-        acc[key] = await requests[key]; // promise fulfiled but using await to get the value
+        // promise fulfiled but using 
+        // await to get the value
+        acc[key] = await requests[key]; 
         return acc;
     }, {});
 ```
