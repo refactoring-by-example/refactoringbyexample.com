@@ -75,7 +75,7 @@ The `.fetch` using an `async.waterfall`, sequentially executes the following ste
 
  Wow, that's a lot of responsibility for a single function! Lets break down each step and use async/await where appropriate. 
 
-### Parallel requests
+### **Parallel requests:**
 ```js
 async.parallel({
         book: getBooks,
@@ -187,14 +187,14 @@ The blacklist was originally included in the `.parallel` call for convenience. B
 const [blacklist, productSourceData] = await Promise.all([getBlacklist(), getProductData()]);
 ```
 
-### Create products and apply blacklist filter
+### **Create products and apply blacklist filter:**
 The logic to create the product model and filter blacklisted items is synchronous and can be reused:
 
 ```js
 const products = filterByBlacklist(createProducts(productSourceData), blacklist);
 ```
 
-### Fetch stock data for the products
+### **Fetch stock data for the products:**
 ```js
 (products, done) => {
     async.map(products, (product, cb) => {
@@ -222,7 +222,7 @@ async function getStockData(products) {
 
 `getStockData` will request the stock data in parallel returning a promise, which if successful, will fulfil to an array of stock responses. The resulting code should look intuitive and didn't require any third party libraries.
 
-### Merge product/stock data and update database
+### **Merge product/stock data and update database:**
 ```js
  (products, stocks, done) => {
      for (const [i, product] of products.entries()) {
