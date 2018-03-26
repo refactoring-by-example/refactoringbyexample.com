@@ -150,7 +150,34 @@ async function getProductData() {
     }, productSourceData);
 ```
 
-`getProductData` creates an object of string (productType) to Promise. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulful or will throw an error if one of the requests fails. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to await the accumulator value as the return value of an async function is a promise.   
+`getProductData` creates an object of string (productType) to Promise. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulful or will throw an error if one of the requests fails. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to await the accumulator value as the return value of an async function is a promise. This is an example of where integrating async/await with existing array methods is less intuitive. In this case, it may be more clear to write a for loop directly or write a simple async `reduce`. Let's opt for the later:
+
+```js
+async function reduce(iterable, fn, initial) => {
+  let accumulator = initial;
+  for (const item of iterable) {
+    accumulator = await fn(accumulator, item);
+  }
+  return accumulator;
+}
+
+async function getProductData() {
+    const requests = {
+        book: getBooks(),
+        dvd: getDvds(),
+        bluray: getBlurays(),
+        vinyl: getVinyls()
+    };
+
+    await Promise.all(Object.values(requests));
+
+    const productSourceData = Promise.resolve({})
+    const keys = Object.keys(requests);
+    return reduce(keys, async (acc, key) => {
+        acc[key] = await requests[key]; // promise fulfiled but using await to get the value
+        return acc;
+    }, {});
+```
 
 The blacklist was originally included in the `.parallel` call for convenience. By using `await` and `Promise.all`, this is not neccessary are the calls can be made independently. This is a significantly cleaner solution: 
 
