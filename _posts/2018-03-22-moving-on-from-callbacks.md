@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Moving on from callbacks"
-date:   2018-03-22 09:48:55 +0000
+date:   2018-03-25 13:10:55 +0000
 categories: javascript
 author: nspragg
 ---
@@ -9,7 +9,7 @@ Software typically changes over to time to meet new requirements, patch faults a
 
 Following on from refactoring an online media store ([Dealing with long conditionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to async/await. 
 
-The online media store uses an offline component, `DataFetcher` module, to fetch and construct product models, which it writes to a product database. The source code for the `DataFetcher` can be found [here](https://github.com/refactoring-by-example/using-async-functions)
+The online media store uses an offline component, `DataFetcher` module, to fetch and construct product models, which it writes to a product database. The source code for the `DataFetcher` can be found [here](https://github.com/refactoring-by-example/async-await)
 
 The DataFetcher module is used like this:
 
@@ -265,7 +265,7 @@ A combination of `await`, `Promise.all` and `map` can be used to migitate this:
 return await Promise.all(merge(products, stocks).map(dao.save));
 ```
 
-A refactored [`.fetch`](https://github.com/refactoring-by-example/using-async-functions/blob/async-await/lib/dataFetcher.js#L180) in it's entirely would look like this:
+A refactored [`.fetch`](https://github.com/refactoring-by-example/async-await/blob/async-await/lib/dataFetcher.js#L180) in it's entirely would look like this:
 
 ```js
 module.exports.fetch = async () => {
