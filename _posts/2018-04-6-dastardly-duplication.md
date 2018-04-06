@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Dastardly duplication"
-date:   2018-03-30 13:10:55 +0000
+date:   2018-04-6 13:10:55 +0000
 categories: javascript
 author: nspragg
 ---
