@@ -56,7 +56,7 @@ async function getDvds() {
 }
 ```
 
-Common sense dictates adding more complex logic to each function is a poor choice and not to mention, in this case, faulty;the above code attempts retries for HTTP 400's (Bad Request), which is probably not desirable. This the bug would have been unnecessarily existed in six functions.  
+Common sense dictates adding more complex logic to each function is a poor choice and not to mention, in this case, faulty; the above code attempts retries for HTTP 400's (Bad Request), which is probably not desirable. This the bug would have been unnecessarily existed in six functions.  
 
 The solution to avoiding this is simple; remove the duplication by creating a `get` function:
 ```js
