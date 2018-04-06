@@ -5,7 +5,7 @@ date:   2018-03-25 13:10:55 +0000
 categories: javascript
 author: nspragg
 ---
-Software typically changes over to time to meet new requirements, patch faults and address feeback from users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous programming in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
+Software typically changes over to time to meet new requirements, patch faults and address feedback from users. Programming lanuages are no different. As developers it's imperative to keep our skills at the cutting edge and where appropriate, apply skills on the software we're writing and maintaining. By doing this we can capitalise on the benefits of the languages' evolution. At the time of writing a notable example was asynchronous programming in NodeJs with the introduction of [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) and the [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator. 
 
 Following on from refactoring an online media store ([Dealing with long conditionals](https://refactoringbyexample.com/2017/01/dealing-with-long-conditionals/)), this refactor demonstrates migrating from callbacks to async/await. 
 
@@ -150,7 +150,7 @@ async function getProductData() {
     }, productSourceData);
 ```
 
-`getProductData` creates an object of string (productType) to Promise. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulful or will throw an error if one of the requests fails. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to await the accumulator value as the return value of an async function is a promise. This is an example of where integrating async/await with existing array methods is less intuitive. In this case, it may be more clear to write a for loop directly or write a simple async `reduce`. Let's opt for the later:
+`getProductData` creates an object of string (productType) to Promise. [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) is used to wait for all the requests to fulfill or will throw an error if one of the requests fails. After successful completion, the response body (fullfillment value) is assigned to the corresponding key using `reduce`. Apart from the `async` function declaration, it's important to await the accumulator value as the return value of an async function is a promise. This is an example of where integrating async/await with existing array methods is less intuitive. In this case, it may be more clear to write a for loop directly or write a simple async `reduce`. Let's opt for the later:
 
 ```js
 async function reduce(iterable, fn, initial) => {
@@ -174,14 +174,14 @@ async function getProductData() {
     const productSourceData = Promise.resolve({})
     const keys = Object.keys(requests);
     return reduce(keys, async (acc, key) => {
-        // promise fulfiled but using 
+        // promise fulfilled but using 
         // await to get the value
         acc[key] = await requests[key]; 
         return acc;
     }, {});
 ```
 
-The blacklist was originally included in the `.parallel` call for convenience. By using `await` and `Promise.all`, this is not neccessary are the calls can be made independently. This is a significantly cleaner solution: 
+The blacklist was originally included in the `.parallel` call for convenience. By using `await` and `Promise.all`, this is not neccessary as the calls can be made independently. This is a significantly cleaner solution: 
 
 ```js
 const [blacklist, productSourceData] = await Promise.all([getBlacklist(), getProductData()]);
