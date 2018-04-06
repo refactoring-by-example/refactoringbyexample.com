@@ -6,9 +6,9 @@ categories: javascript
 author: nspragg
 ---
 
-One of the most fundamental principles in software developement is eliminating duplication. This is often referred to as the [dry principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) and is an underlying notion of many design patterns. Understanding and appropriately applying this principle is a key aspect of creating and maintaining clean codebases. 
+One of the most fundamental principles in software development is eliminating duplication. This is often referred to as the [dry principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) and is an underlying notion of many design patterns. Understanding and appropriately applying this principle is a key aspect of creating and maintaining clean codebases. 
 
-In the [moving on from callbacks](https://refactoringbyexample.com/2018/03/moving-on-from-callbacks/) post a `DataFetcher` component for a on-line media store was refactored to use `async/await`. During the refactor it was noted that the fetching module contained functions that were very similar. Reviewing the [source](https://github.com/refactoring-by-example/dastardly-duplication/blob/master/lib/dataFetcher.js) evidences blatant duplication in the fetching and object conversion routines. Both of these will be refactored separetely. 
+In the [moving on from callbacks](https://refactoringbyexample.com/2018/03/moving-on-from-callbacks/) post a `DataFetcher` component for a on-line media store was refactored to use `async/await`. During the refactor it was noted that the fetching module contained functions that were very similar. Reviewing the [source](https://github.com/refactoring-by-example/dastardly-duplication/blob/master/lib/dataFetcher.js) evidences blatant duplication in the fetching and object conversion routines. Both of these will be refactored separately. 
 
 ### Remove duplication from the fetch functions:
 
@@ -56,20 +56,33 @@ async function getDvds() {
 }
 ```
 
-Common sense dictates adding more complex logic to each function is a poor choice and not to mention, in this case, faulty;the above code attempts retries for HTTP 400's (Bad Request), which is probably not desirable. This the bug would have been unnessarly existed in six functions.  
+Common sense dictates adding more complex logic to each function is a poor choice and not to mention, in this case, faulty;the above code attempts retries for HTTP 400's (Bad Request), which is probably not desirable. This the bug would have been unnecessarily existed in six functions.  
 
 The solution to avoiding this is simple; remove the duplication by creating a `get` function:
 ```js
-async function get(url) {
-    const res = await request.get(url);
-    if (res.statusCode >= 400) {
-        throw new Error(`Error: ${res.statusCode}`);
+const DEFAULT_RETRIES = 2;
+
+async function get(url, opts) {
+    let retries = opts && opts.retries || DEFAULT_RETRIES;
+
+    if (retries === 0) return fetch(url);
+
+    for (let i = 0; i < retries; i++) {
+        try {
+            const res = await fetch(url);
+            return res.body;
+        } catch (err) {
+            if (i === retries - 1) {
+                throw err;
+            }
+        }
     }
-    return res.body;
 }
 ```
 
-All the fetching routines were identical except for the url, which is now passed as a parameter. Now, all fetching logic can be defined in one place, reducing code bloat. 
+All the fetching routines were identical except for the url, which is now passed as a parameter. An `opts` object is also passed in to allow for configurable retries. Using an object is more flexible and allows for feature enhancement. For example, adding retry delay or timeouts. 
+
+Now, all fetching logic is defined in one place, reducing code bloat. 
 
 ### Remove duplication from the conversion functions:
 
@@ -118,17 +131,17 @@ On first glance refactoring these functions looks really simple, but some there 
  * the values from the source object are used to build the titles object. `releaseDate` requires reformatting. 
  * each converter function returns an product object with the following properties: `id`, `type`, `title`, `subtitle`, and `kind` (optional) 
 
-A first pass solution would be to write a single `convert` function that uses a `key map` and `value map` to perform the convertions:
+A first pass solution would be to write a single `convert` function that uses a `key map` and `value map` to perform the conversions:
 
 conversion maps:
 ```js
-// all convertions require this mapping
+// all conversions require this mapping
 const defaultMapping = {
     genre: 'kind',
     releaseDate: 'year'
 };
 
-// additional convertion for books
+// additional conversion for books
 const bookMapping = {
     defaultMapping,
     title: 'bookTitle'
@@ -142,7 +155,7 @@ const resolvers = {
 };
 ```
 
-Create a single convertion function:
+Create a single conversion function:
 ```js
 function convert(type, to) {
     const { id, genre } = to;
@@ -161,7 +174,7 @@ function convert(type, to) {
 }
 ```
 
-Create helper functions to creconstruct the object for `getTitles` and perform the object lookups:
+Create helper functions to construct the object for `getTitles` and perform the object lookups:
 ```js
 function resolveKey(key, mapping) {
     const override = mapping[key];
@@ -188,8 +201,8 @@ function createTitles(type, to) {
 }
 ```
 
-By creating a `convert` function the convertion is defined once rather than repeating for every product type. The variable parts of the convertion have been extracted to objects (for lookup), which can easily be updated for change requests or additional products. 
+By creating a `convert` function the conversion is defined once rather than repeating for every product type. The variable parts of the conversion have been extracted to objects (for lookup), which can easily be updated for change requests or additional products. 
 
-The `dataFetcher` module has been significantly cleaned by eliminating duplication. However, the refactoring of the fetching and conversion functions seem half baked. Should the fetching module have specific knowledge of HTTP requests or object conversion? Is this the right level of abstraction? The answers to this questions will be addressed in a sequent post. 
+Eliminating duplication has significantly cleaned the `dataFetcher` module. However, the refactoring of the fetching and conversion functions seem half baked. Should the fetching module have specific knowledge of HTTP requests or object conversion? Is this the right level of abstraction? The answers to this questions will be addressed in a sequent post. 
 
 Thanks for reading.
